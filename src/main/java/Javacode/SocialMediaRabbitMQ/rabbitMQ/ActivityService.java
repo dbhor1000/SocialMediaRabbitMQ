@@ -4,18 +4,20 @@ import Javacode.SocialMediaRabbitMQ.model.Comment;
 import Javacode.SocialMediaRabbitMQ.model.Like;
 import Javacode.SocialMediaRabbitMQ.model.Publication;
 import Javacode.SocialMediaRabbitMQ.repository.PublicationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ActivityService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
     private final PublicationRepository publicationRepository;
 
     public ActivityService(PublicationRepository publicationRepository) {
         this.publicationRepository = publicationRepository;
     }
-
 
     @RabbitListener(queues = "new_likes")
     public void handleLike(Like like) {
@@ -23,10 +25,10 @@ public class ActivityService {
         Publication publication = publicationRepository.findById(like.getLikedPublicationId()).orElse(null);
         if (publication != null) {
             String notificationMessage1 = "User " + like.getLikeByUsername() + " liked " + publication.getMessage() + " by " + publication.getPublishedByUsername();
-            System.out.println("Sending like notification to subscribers of " + publication.getTag() + ": " + notificationMessage1);
+            logger.info("Sending like notification to subscribers of " + publication.getTag() + ": " + notificationMessage1);
             String notificationMessage2 = "To user " + publication.getPublishedByUsername() + ": " + publication.getMessage() + " received a new like from "
                     + like.getLikeByUsername();
-            System.out.println(notificationMessage2);
+            logger.info(notificationMessage2);
             // Send notification to the user
         }
     }
@@ -37,10 +39,10 @@ public class ActivityService {
         Publication publication = publicationRepository.findById(comment.getCommentedOnPublicationId()).orElse(null);
         if (publication != null) {
             String notificationMessage1 = "User " + comment.getCommentByUsername() + " commented on " + publication.getMessage() + " by " + publication.getPublishedByUsername() + ": " + comment.getCommentText();
-            System.out.println("Sending comment notification to subscribers of " + publication.getTag() + ": " + notificationMessage1);
+            logger.info("Sending comment notification to subscribers of " + publication.getTag() + ": " + notificationMessage1);
             String notificationMessage2 = "To user " + publication.getPublishedByUsername() + ": " + publication.getMessage() +
                     " received a new comment from " + comment.getCommentByUsername();
-            System.out.println(notificationMessage2);
+            logger.info(notificationMessage2);
             // Send notification to the user
         }
     }

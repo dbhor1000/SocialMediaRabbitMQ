@@ -18,7 +18,7 @@ public class RabbitConfig {
 
     @Bean
     public Queue notificationsQueue() {
-        return new Queue("уведомления_подписчикам");
+        return new Queue("new_notifications");
     }
 
     @Bean

@@ -51,5 +51,4 @@ public class Controller {
         rabbitTemplate.convertAndSend("new_likes", savedLike);
         return ResponseEntity.ok(savedLike);
     }
-
 }

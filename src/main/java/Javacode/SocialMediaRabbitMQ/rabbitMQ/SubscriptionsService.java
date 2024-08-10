@@ -28,6 +28,6 @@ public class SubscriptionsService {
         );
 
         // Send to notifications queue
-        rabbitTemplate.convertAndSend("уведомления_подписчикам", publicationDeliverTo);
+        rabbitTemplate.convertAndSend("new_notifications", publicationDeliverTo);
     }
 }
